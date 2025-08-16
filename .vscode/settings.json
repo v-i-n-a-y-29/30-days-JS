@@ -1,0 +1,11 @@
+{
+    "editor.quickSuggestions": {
+        "other": "on",
+        "comments": "on",
+        "strings": "on"
+    },
+    "[css]": {
+        "editor.suggest.insertMode": "replace",
+        "editor.suggest.showWords": true
+    }
+}

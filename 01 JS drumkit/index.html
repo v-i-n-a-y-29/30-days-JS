@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>JS Drum Kit</title>
+    <style>
+      .key {
+        transition: all 0.07s ease;
+      }
+      .playing {
+        transform: scale(1.1);
+        border-color: #ffc600;
+        box-shadow: 0 0 1rem #ffc600;
+      }
+      
+      /* Background animations */
+      @keyframes float {
+        0% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+      }
+      
+      .drum-symbol {
+        position: absolute;
+        font-size: 2rem;
+        color: rgba(255, 255, 255, 0.4);
+        z-index: -1;
+        animation: float 15s linear infinite;
+        filter: drop-shadow(0 0 10px rgba(255, 198, 0, 0.3));
+      }
+      
+      
+      .bg-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      }
+    </style>
+  </head>
+  <body class="text-white">
+    <div class="bg-container" id="bg-container">
+      <!-- JS will add animated elements here -->
+    </div>
+    
+    <div class="min-h-screen flex items-center justify-center">
+      <div class="flex gap-4">
+        <div data-key="65" class="key border-2 border-gray-700 rounded-lg p-4 w-24 h-24 flex flex-col items-center justify-center bg-gray-800 bg-opacity-80 backdrop-blur-sm">
+          <kbd class="text-4xl font-bold">A</kbd>
+          <span class="text-xs text-gray-400">CLAP</span>
+        </div>
+        <div data-key="83" class="key border-2 border-gray-700 rounded-lg p-4 w-24 h-24 flex flex-col items-center justify-center bg-gray-800 bg-opacity-80 backdrop-blur-sm">
+          <kbd class="text-4xl font-bold">S</kbd>
+          <span class="text-xs text-gray-400">HIHAT</span>
+        </div>
+        <div data-key="68" class="key border-2 border-gray-700 rounded-lg p-4 w-24 h-24 flex flex-col items-center justify-center bg-gray-800 bg-opacity-80 backdrop-blur-sm">
+          <kbd class="text-4xl font-bold">D</kbd>
+          <span class="text-xs text-gray-400">KICK</span>
+        </div>
+        <div data-key="70" class="key border-2 border-gray-700 rounded-lg p-4 w-24 h-24 flex flex-col items-center justify-center bg-gray-800 bg-opacity-80 backdrop-blur-sm">
+          <kbd class="text-4xl font-bold">F</kbd>
+          <span class="text-xs text-gray-400">OPENHAT</span>
+        </div>
+        <div data-key="71" class="key border-2 border-gray-700 rounded-lg p-4 w-24 h-24 flex flex-col items-center justify-center bg-gray-800 bg-opacity-80 backdrop-blur-sm">
+          <kbd class="text-4xl font-bold">G</kbd>
+          <span class="text-xs text-gray-400">BOOM</span>
+        </div>
+        <div data-key="72" class="key border-2 border-gray-700 rounded-lg p-4 w-24 h-24 flex flex-col items-center justify-center bg-gray-800 bg-opacity-80 backdrop-blur-sm">
+          <kbd class="text-4xl font-bold">H</kbd>
+          <span class="text-xs text-gray-400">RIDE</span>
+        </div>
+        <div data-key="74" class="key border-2 border-gray-700 rounded-lg p-4 w-24 h-24 flex flex-col items-center justify-center bg-gray-800 bg-opacity-80 backdrop-blur-sm">
+          <kbd class="text-4xl font-bold">J</kbd>
+          <span class="text-xs text-gray-400">SNARE</span>
+        </div>
+        <div data-key="75" class="key border-2 border-gray-700 rounded-lg p-4 w-24 h-24 flex flex-col items-center justify-center bg-gray-800 bg-opacity-80 backdrop-blur-sm">
+          <kbd class="text-4xl font-bold">K</kbd>
+          <span class="text-xs text-gray-400">TOM</span>
+        </div>
+        <div data-key="76" class="key border-2 border-gray-700 rounded-lg p-4 w-24 h-24 flex flex-col items-center justify-center bg-gray-800 bg-opacity-80 backdrop-blur-sm">
+          <kbd class="text-4xl font-bold">L</kbd>
+          <span class="text-xs text-gray-400">TINK</span>
+        </div>
+      </div>
+    </div>
+
+    <audio data-key="65" src="./sounds/boom.wav"></audio>
+    <audio data-key="83" src="./sounds/clap.wav"></audio>
+    <audio data-key="68" src="./sounds/hihat.wav"></audio>
+    <audio data-key="70" src="./sounds/kick.wav"></audio>
+    <audio data-key="71" src="./sounds/openhat.wav"></audio>
+    <audio data-key="72" src="./sounds/ride.wav"></audio>
+    <audio data-key="74" src="./sounds/snare.wav"></audio>
+    <audio data-key="75" src="./sounds/tink.wav"></audio>
+    <audio data-key="76" src="./sounds/tom.wav"></audio>
+
+    <script src="./script.js"></script>
+    <script>
+      // Create animated background elements
+      const bgContainer = document.getElementById('bg-container');
+      const drumSymbols = ['🥁', '🎵', '🎶', '🎧', '🎼', '🎚️', '🎛️', '🔊'];
+      const colors = ['#ffc600', '#ff6b6b', '#48dbfb', '#1dd1a1', '#f368e0'];
+      
+      // Create initial drum symbols
+      for (let i = 0; i < 20; i++) {
+        createDrumSymbol();
+      }
+      
+      // Listen for key presses (for visual feedback only)
+      window.addEventListener('keydown', function(e) {
+        const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+        const key = document.querySelector(`div[data-key="${e.keyCode}"]`);
+        
+        if (!audio) return; // Stop if no audio for this key
+      });
+      
+      // Randomly create drum symbols
+      function createDrumSymbol() {
+        const symbol = document.createElement('div');
+        const randomSymbol = drumSymbols[Math.floor(Math.random() * drumSymbols.length)];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        
+        symbol.classList.add('drum-symbol');
+        symbol.textContent = randomSymbol;
+        symbol.style.left = Math.random() * 100 + 'vw';
+        symbol.style.bottom = -20 + 'px';
+        symbol.style.color = randomColor;
+        symbol.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        symbol.style.fontSize = (Math.random() * 2 + 1) + 'rem';
+        bgContainer.appendChild(symbol);
+        
+        // Remove symbol after animation completes and create a new one
+        const duration = parseFloat(symbol.style.animationDuration) * 1000;
+        setTimeout(() => {
+          symbol.remove();
+          createDrumSymbol();
+        }, duration);
+      }
+    </script>
+  </body>
+</html>
